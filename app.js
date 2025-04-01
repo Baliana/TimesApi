@@ -7,7 +7,11 @@ const containerResultados = document.getElementById('cards-container')
 
 // Função principal para buscar dados da liga
 const buscarDadosDaLiga = async (nomeLiga) => {
-    const API_URL = "https://v3.football.api-sports.io/leagues"
+
+    const apiKey = "b733b3f1e9msh88be18b03230eb5p1ba739jsn6b0b24338e47"
+
+
+    const API_URL = `https://v3.football.api-sports.io/leagues?search=${encodeURIComponent(nomeLiga)}` //https://v3.football.api-sports.io/leagues
 
     if (!nomeLiga || nomeLiga.trim() === "") {
         alert('Nome da liga inválido!')
@@ -16,23 +20,39 @@ const buscarDadosDaLiga = async (nomeLiga) => {
 
     try {
         
-        const options = {
-            headers: {
-                "Accept": "application/json"
-            }
-        }
+            // const headers: {[
+            //     "Accept": "application/json",
+            //     "x-rapidapi-key": `${apiKey}`,
+            //     "x-rapidapi-host": 'v3.football.api-sports.io'
+                
+            // ]}
 
-        const response = await fetch(API_URL, options)
+            var myHeaders = new Headers();
+            myHeaders.append("x-rapidapi-key", apiKey);
+            myHeaders.append("x-rapidapi-host", "v3.football.api-sports.io");
 
-        console.log(response); 
+            var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+            };
+        
 
-        if (response.status === 200) {
-            const data = await response.json()
+            const response = await fetch(API_URL, requestOptions)
+
+            console.log(await response.json()); 
+
+            if (response.status === 200) {
+                const data = await response.json()
+                
+                console.log(data);
             
-          
-            const ligaEncontrada = data.response.find(liga => 
-                liga.league.name.toLowerCase().includes(nomeLiga.toLowerCase())
-            )
+                const ligaEncontrada = data.response.find(liga => 
+                    liga.league.name.toLowerCase().includes(nomeLiga.toLowerCase())
+                )
+
+           
+            
 
             if (ligaEncontrada){
                 exibirDadosDaLiga(ligaEncontrada)
@@ -67,6 +87,8 @@ const exibirDadosDaLiga = (dadosLiga) => {
 listaDeLigas.forEach(liga => {
     liga.addEventListener('click', () => {
         const nomeLiga = liga.textContent;
+        console.log(nomeLiga);
+        
         buscarDadosDaLiga(nomeLiga); 
     })
 })
@@ -89,7 +111,7 @@ listaDeLigas.forEach(liga => {
         './img/img13.png',
         './img/img14.png'
     ]
-    // executar uma função para cada elemento 
+  
     imagens.forEach((src, index) => {
         let img = document.createElement("img")
         img.src = src
