@@ -1,17 +1,12 @@
- "use strict"
-"use strict";
+"use strict"
 
-
-const listaDeLigas = document.querySelectorAll('.lista-ligas li')
-const containerResultados = document.getElementById('cards-container')
+const listaDeLigas = document.querySelectorAll('.lista-ligas li');
+const containerResultados = document.getElementById('cards-container');
 
 // Função principal para buscar dados da liga
 const buscarDadosDaLiga = async (nomeLiga) => {
-
-    const apiKey = "b733b3f1e9msh88be18b03230eb5p1ba739jsn6b0b24338e47"
-
-
-    const API_URL = `https://v3.football.api-sports.io/leagues?search=${encodeURIComponent(nomeLiga)}` //https://v3.football.api-sports.io/leagues
+    const apiKey = "4e9079e7d3e2a235b5a8e67371e72ba9"
+    const API_URL = `https://v3.football.api-sports.io/leagues?search=${encodeURIComponent(nomeLiga)}`
 
     if (!nomeLiga || nomeLiga.trim() === "") {
         alert('Nome da liga inválido!')
@@ -19,42 +14,27 @@ const buscarDadosDaLiga = async (nomeLiga) => {
     }
 
     try {
-        
-            // const headers: {[
-            //     "Accept": "application/json",
-            //     "x-rapidapi-key": `${apiKey}`,
-            //     "x-rapidapi-host": 'v3.football.api-sports.io'
-                
-            // ]}
+        const myHeaders = new Headers()
+        myHeaders.append("x-rapidapi-key", apiKey);
+        myHeaders.append("x-rapidapi-host", "v3.football.api-sports.io")
 
-            var myHeaders = new Headers();
-            myHeaders.append("x-rapidapi-key", apiKey);
-            myHeaders.append("x-rapidapi-host", "v3.football.api-sports.io");
-
-            var requestOptions = {
+        const requestOptions = {
             method: 'GET',
             headers: myHeaders,
             redirect: 'follow'
-            };
-        
+        }
+        console.log(API_URL)
+        const response = await fetch(API_URL, requestOptions);
 
-            const response = await fetch(API_URL, requestOptions)
-
-            console.log(await response.json()); 
-
-            if (response.status === 200) {
-                const data = await response.json()
-                
-                console.log(data);
+        if (response.ok) {
+            const data = await response.json()
             
-                const ligaEncontrada = data.response.find(liga => 
-                    liga.league.name.toLowerCase().includes(nomeLiga.toLowerCase())
-                )
+            // Encontrar a liga correspondente
+            const ligaEncontrada = data.response.find(liga => 
+                liga.league.name.toLowerCase().includes(nomeLiga.toLowerCase())
+            )
 
-           
-            
-
-            if (ligaEncontrada){
+            if (ligaEncontrada) {
                 exibirDadosDaLiga(ligaEncontrada)
             } else {
                 alert('Liga não encontrada na API!')
@@ -68,59 +48,59 @@ const buscarDadosDaLiga = async (nomeLiga) => {
     }
 }
 
+// Função para exibir os dados da liga na tela
 const exibirDadosDaLiga = (dadosLiga) => {
-
     containerResultados.innerHTML = ''
-
 
     const ligaHTML = `
         <div class="liga-card">
             <h2>${dadosLiga.league.name}</h2>
             <img src="${dadosLiga.league.logo}" alt="Logo">
-            <p>País: ${dadosLiga.country.name}</p>
-            <p>Temporada atual: ${dadosLiga.seasons[0].year}</p>
+            <p><strong>País:</strong> ${dadosLiga.country.name}</p>
+            <p><strong>Temporada atual:</strong> ${dadosLiga.seasons[0].year}</p>
         </div>
     `
-    
-    containerResultados.innerHTML = ligaHTML
+
+    containerResultados.innerHTML = ligaHTML // Atualiza o container com os dados da nova liga
 }
+
+// Adicionar clique para cada liga na lista
 listaDeLigas.forEach(liga => {
     liga.addEventListener('click', () => {
-        const nomeLiga = liga.textContent;
-        console.log(nomeLiga);
-        
-        buscarDadosDaLiga(nomeLiga); 
+        const nomeLiga = liga.textContent.trim()
+        buscarDadosDaLiga(nomeLiga)
     })
 })
 
-    const container = document.getElementById("cards-container")
-    const imagens = [
-        './img/setas.png',
-        './img/img1.png',
-        './img/img2.png',
-        './img/img3.png',
-        './img/img4.png',
-        './img/img5.png',
-        './img/img6.png',
-        './img/img7.png',
-        './img/img8.png',
-        './img/img9.png',
-        './img/img10.png',
-        './img/img11.png',
-        './img/img12.png',
-        './img/img13.png',
-        './img/img14.png'
-    ]
-  
-    imagens.forEach((src, index) => {
-        let img = document.createElement("img")
-        img.src = src
-        img.alt = `Imagem ${index + 1}`
-        img.className = "card"
-        img.style.width = "30px"
-        img.style.height = "auto"
-        img.style.maxHeight = "200px"
-        img.style.objectFit = "cover"
-        img.style.marginLeft = "2px"
-        container.appendChild(img);
-    })
+
+const container = document.getElementById("cards-container")
+const imagens = [
+    './img/setas.png',
+    './img/img1.png',
+    './img/img2.png',
+    './img/img3.png',
+    './img/img4.png',
+    './img/img5.png',
+    './img/img6.png',
+    './img/img7.png',
+    './img/img8.png',
+    './img/img9.png',
+    './img/img10.png',
+    './img/img11.png',
+    './img/img12.png',
+    './img/img13.png',
+    './img/img14.png'
+]
+
+imagens.forEach((src, index) => {
+    let img = document.createElement("img")
+    img.src = src
+    img.alt = `Imagem ${index + 1}`
+    img.className = "card"
+    img.style.width = "30px"
+    img.style.height = "auto"
+    img.style.maxHeight = "200px"
+    img.style.objectFit = "cover"
+    img.style.marginLeft = "2px"
+    container.appendChild(img);
+})
